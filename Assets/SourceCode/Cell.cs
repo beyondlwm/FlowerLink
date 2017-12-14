@@ -37,6 +37,17 @@ public class Cell : MonoBehaviour, IPointerClickHandler
                 CGameManager.Instance.m_cellList[dstCellPos.y][dstCellPos.x] = null;
                 CGameManager.Instance.RemoveCell(CGameManager.Instance.SrcCell);
                 CGameManager.Instance.RemoveCell(this);
+                // Detect if we need to rebuild the whole map
+                if(CGameManager.Instance.SrcCell == CGameManager.Instance.m_availableSrcCell ||
+                    CGameManager.Instance.SrcCell == CGameManager.Instance.m_availableDstCell ||
+                    this == CGameManager.Instance.m_availableSrcCell ||
+                    this == CGameManager.Instance.m_availableDstCell)
+                {
+                    while (!CGameManager.Instance.FindAvailableLink(ref CGameManager.Instance.m_availableSrcCell, ref CGameManager.Instance.m_availableDstCell))
+                    {
+                        CGameManager.Instance.RebuildCellList();
+                    }
+                }
             }
             CGameManager.Instance.SrcCell = null;
         }

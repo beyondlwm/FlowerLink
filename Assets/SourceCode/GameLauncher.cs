@@ -20,7 +20,7 @@ public class GameLauncher : MonoBehaviour {
     {
         float fCellSize = Mathf.Min((float)Screen.width / CGameManager.Instance.m_pConfig.m_nMapWidth,
             (float)Screen.height / CGameManager.Instance.m_pConfig.m_nMapHeight);
-
+        CGameManager.Instance.m_fCellSize = fCellSize;
         cellPrefab = Resources.Load("Prefab/Cell") as GameObject;
         Debug.Assert(cellPrefab != null);
         cellPrefab.GetComponent<RectTransform>().sizeDelta = new Vector2(fCellSize, fCellSize);
@@ -55,9 +55,22 @@ public class GameLauncher : MonoBehaviour {
                 newCell.m_x = j;
                 newCell.m_y = i;
                 newCellObj.GetComponent<Image>().sprite = CGameManager.Instance.m_pConfig.m_ImageList[newCell.m_nType];
+                int nPosIndex = j + i * CGameManager.Instance.m_pConfig.m_nMapWidth;
+                Debug.Assert(!CGameManager.Instance.m_cellTypeMap.ContainsKey(newCell.m_nType) || !CGameManager.Instance.m_cellTypeMap[newCell.m_nType].ContainsKey(nPosIndex));
+                Dictionary<int, Cell> value;
+                if (!CGameManager.Instance.m_cellTypeMap.TryGetValue(newCell.m_nType, out value))
+                {
+                    value = new Dictionary<int, Cell>();                    
+                    CGameManager.Instance.m_cellTypeMap.Add(newCell.m_nType, value);
+                }
+                value.Add(nPosIndex, newCell);
                 cellList.Add(newCell);
                 ++nCounter;
             }
+        }
+        while(!CGameManager.Instance.FindAvailableLink(ref CGameManager.Instance.m_availableSrcCell, ref CGameManager.Instance.m_availableDstCell))
+        {
+            CGameManager.Instance.RebuildCellList();
         }
     }
 }
