@@ -57,10 +57,10 @@ public class GameLauncher : MonoBehaviour {
                 newCellObj.GetComponent<Image>().sprite = CGameManager.Instance.m_pConfig.m_ImageList[newCell.m_nType];
                 int nPosIndex = j + i * CGameManager.Instance.m_pConfig.m_nMapWidth;
                 Debug.Assert(!CGameManager.Instance.m_cellTypeMap.ContainsKey(newCell.m_nType) || !CGameManager.Instance.m_cellTypeMap[newCell.m_nType].ContainsKey(nPosIndex));
-                Dictionary<int, Cell> value;
+                MyDictionary<int, Cell> value;
                 if (!CGameManager.Instance.m_cellTypeMap.TryGetValue(newCell.m_nType, out value))
                 {
-                    value = new Dictionary<int, Cell>();                    
+                    value = new MyDictionary<int, Cell>();
                     CGameManager.Instance.m_cellTypeMap.Add(newCell.m_nType, value);
                 }
                 value.Add(nPosIndex, newCell);

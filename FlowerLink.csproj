@@ -223,6 +223,7 @@
     <Compile Include="Assets\SourceCode\CGameConfig.cs" />
     <Compile Include="Assets\SourceCode\GameLauncher.cs" />
     <Compile Include="Assets\SourceCode\GameManager.cs" />
+    <Compile Include="Assets\SourceCode\MyDictionary.cs" />
     <Compile Include="Assets\SourceCode\Singleton.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

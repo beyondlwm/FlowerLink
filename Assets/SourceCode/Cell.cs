@@ -43,9 +43,12 @@ public class Cell : MonoBehaviour, IPointerClickHandler
                     this == CGameManager.Instance.m_availableSrcCell ||
                     this == CGameManager.Instance.m_availableDstCell)
                 {
-                    while (!CGameManager.Instance.FindAvailableLink(ref CGameManager.Instance.m_availableSrcCell, ref CGameManager.Instance.m_availableDstCell))
+                    if (CGameManager.Instance.m_cellTypeMap.Count > 0)
                     {
-                        CGameManager.Instance.RebuildCellList();
+                        while (!CGameManager.Instance.FindAvailableLink(ref CGameManager.Instance.m_availableSrcCell, ref CGameManager.Instance.m_availableDstCell))
+                        {
+                            CGameManager.Instance.RebuildCellList();
+                        }
                     }
                 }
             }

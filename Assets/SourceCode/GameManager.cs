@@ -19,11 +19,12 @@ public struct CellPos
         y = nCellIndex / CGameManager.Instance.m_pConfig.m_nMapWidth;
     }
 }
+
 public class CGameManager : CSingleton<CGameManager>
 {
     public CGameConfig m_pConfig;
     public List<List<Cell>> m_cellList = new List<List<Cell>>();
-    public Dictionary<int, Dictionary<int, Cell>> m_cellTypeMap = new Dictionary<int, Dictionary<int, Cell>>();
+    public MyDictionary<int, MyDictionary<int, Cell>> m_cellTypeMap = new MyDictionary<int, MyDictionary<int, Cell>>();
     public float m_fCellSize;
     public Cell m_availableSrcCell;
     public Cell m_availableDstCell;
@@ -58,6 +59,8 @@ public class CGameManager : CSingleton<CGameManager>
                     {
                         srcCell = iterCell.Current.Value;
                         dstCell = nextIterCell.Current.Value;
+                        srcCell.gameObject.GetComponent<Image>().color = new Color(0,1,1,1);
+                        dstCell.gameObject.GetComponent<Image>().color = new Color(0, 1, 1, 1);
                         return true;
                     }
                 }
@@ -99,7 +102,7 @@ public class CGameManager : CSingleton<CGameManager>
     {
         m_cellList[cell.m_y][cell.m_x] = null;
         int nPosIndex = cell.m_x + cell.m_y * CGameManager.Instance.m_pConfig.m_nMapWidth;
-        Debug.Assert(m_cellTypeMap[cell.m_nType].ContainsKey(nPosIndex));
+        Debug.Assert(m_cellTypeMap.ContainsKey(cell.m_nType) && m_cellTypeMap[cell.m_nType].ContainsKey(nPosIndex));
         m_cellTypeMap[cell.m_nType].Remove(nPosIndex);
         if (m_cellTypeMap[cell.m_nType].Count == 0)
         {
