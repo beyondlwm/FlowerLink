@@ -20,6 +20,12 @@ public struct CellPos
     }
 }
 
+public struct Record
+{
+    public string name;
+    public float time;
+}
+
 public class CGameManager : CSingleton<CGameManager>
 {
     public CGameConfig m_pConfig;
@@ -28,6 +34,9 @@ public class CGameManager : CSingleton<CGameManager>
     public float m_fCellSize;
     public Cell m_availableSrcCell;
     public Cell m_availableDstCell;
+    public float m_fGameTime;
+    public string m_strPlayerName;
+    public List<Record> m_recordList = new List<Record>();
     public Cell SrcCell { get { return m_srcCell; } set {
             if (m_srcCell != null)
             {
@@ -60,8 +69,6 @@ public class CGameManager : CSingleton<CGameManager>
                     {
                         srcCell = iterCell.Current.Value;
                         dstCell = nextIterCell.Current.Value;
-                        srcCell.gameObject.GetComponent<Image>().color = new Color(0,1,1,1);
-                        dstCell.gameObject.GetComponent<Image>().color = new Color(0, 1, 1, 1);
                         return true;
                     }
                 }
@@ -192,7 +199,6 @@ public class CGameManager : CSingleton<CGameManager>
     {
         bool bRet = false;
         CellPos corner1 = new CellPos(0,0);
-        CellPos corner2 = new CellPos(0,0);
         for(int i = srcPos.x + 1; i < m_pConfig.m_nMapWidth; ++i)
         {
             if (m_cellList[srcPos.y][i] != null)
@@ -285,8 +291,8 @@ public class CGameManager : CSingleton<CGameManager>
         cellPrefab = Resources.Load("Prefab/Cell") as GameObject;
         Debug.Assert(cellPrefab != null);
         cellPrefab.GetComponent<RectTransform>().sizeDelta = new Vector2(fCellSize, fCellSize);
-        GameObject canvas = GameObject.Find("/Canvas");
-        Debug.Assert(canvas != null);
+        GameObject cellPanel = GameObject.Find("/Canvas/CellPanel");
+        Debug.Assert(cellPanel != null);
         CGameManager.Instance.m_cellList.Clear();
         int nImageCount = CGameManager.Instance.m_pConfig.m_ImageList.Count;
         int nTotalCellCount = CGameManager.Instance.m_pConfig.m_nMapHeight *
@@ -310,7 +316,7 @@ public class CGameManager : CSingleton<CGameManager>
             {
                 GameObject newCellObj = UnityEngine.Object.Instantiate(cellPrefab) as GameObject;
                 newCellObj.GetComponent<RectTransform>().position = new Vector3((j + 0.5f) * fCellSize, (i + 0.5f) * fCellSize, 0);
-                newCellObj.transform.SetParent(canvas.transform);
+                newCellObj.transform.SetParent(cellPanel.transform);
                 Cell newCell = newCellObj.GetComponent<Cell>();
                 newCell.m_nType = randomTypeList[nCounter];
                 newCell.m_x = j;
@@ -333,5 +339,26 @@ public class CGameManager : CSingleton<CGameManager>
         {
             CGameManager.Instance.RebuildCellList();
         }
+    }
+
+    public void Restart()
+    {
+        for (int i = 0; i < m_cellList.Count; ++i)
+        {
+            for(int j = 0; j < m_cellList[i].Count; ++j)
+            {
+                if (m_cellList[i][j] != null)
+                {
+                    GameObject.Destroy(m_cellList[i][j].gameObject);
+                }
+            }
+        }
+        m_cellList.Clear();
+        m_cellTypeMap.Clear();
+        m_availableSrcCell = null;
+        m_availableDstCell = null;
+        m_fGameTime = 0;
+        SrcCell = null;
+        GenerateCells();
     }
 }
